@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import com.assignment.facescannerapp.helper.PermissionHelper
+import com.assignment.facescannerapp.view.FaceGalleryScreen
 import com.assignment.facescannerapp.view.PermissionRequiredScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             if (permissionGranted.value) {
                 Toast.makeText(this, "Your actual screen content", Toast.LENGTH_SHORT).show()
-                // MainAppContent() // Your actual screen content
+                FaceGalleryScreen()
             } else {
                 PermissionRequiredScreen(onRetry = { askGalleryPermission() })
             }
