@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
         askGalleryPermission()
         setContent {
             if (permissionGranted.value) {
-                Toast.makeText(this, "Your actual screen content", Toast.LENGTH_SHORT).show()
                 FaceGalleryScreen()
             } else {
                 PermissionRequiredScreen(onRetry = { askGalleryPermission() })
