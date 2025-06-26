@@ -42,8 +42,8 @@ Tags are saved locally and persist across app restarts.
 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/face-scanner-app.git
-cd face-scanner-app
+git https://github.com/LakshLathiya/FaceScannerApp.git
+cd FaceScannerApp
 ```
 
 2. Build App on Actual device
