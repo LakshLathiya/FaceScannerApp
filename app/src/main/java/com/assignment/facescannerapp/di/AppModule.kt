@@ -6,6 +6,7 @@ import com.assignment.facescannerapp.data.ImageRepositoryImpl
 import com.assignment.facescannerapp.data.room.AppDatabase
 import com.assignment.facescannerapp.data.room.dao.FaceTagDao
 import com.assignment.facescannerapp.domain.repo_interface.ImageRepository
+import com.assignment.facescannerapp.domain.usecase.DetectFacesForImageUseCase
 import com.assignment.facescannerapp.domain.usecase.FaceDetectorUseCase
 import com.assignment.facescannerapp.domain.usecase.GetFaceTagForImageUseCase
 import com.assignment.facescannerapp.domain.usecase.SaveFaceTagUseCase
@@ -40,4 +41,8 @@ object AppModule {
     @Provides
     fun provideGetFaceTagForImageUseCaseUseCase(repo: ImageRepository): GetFaceTagForImageUseCase =
         GetFaceTagForImageUseCase(repo)
+
+    @Provides
+    fun provideDetectFacesForImageUseCaseUseCaseUseCase(repo: ImageRepository): DetectFacesForImageUseCase =
+        DetectFacesForImageUseCase(repo)
 }

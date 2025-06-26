@@ -87,6 +87,32 @@ class ImageRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun detectFacesForImage(uri: Uri): List<FaceBox> {
+        val bitmap = loadBitmapFromUri(uri) ?: return emptyList()
+        val inputImage = InputImage.fromBitmap(bitmap, 0)
+
+        val faces = faceDetector.process(inputImage).await()
+        val savedTags = dao.getTagsForImage(uri.toString())
+
+        return faces.map { face ->
+            val bounds = face.boundingBox
+            val matchedTag = savedTags.find {
+                it.left == bounds.left.toFloat() &&
+                        it.top == bounds.top.toFloat() &&
+                        it.right == bounds.right.toFloat() &&
+                        it.bottom == bounds.bottom.toFloat()
+            }
+
+            FaceBox(
+                left = bounds.left.toFloat(),
+                top = bounds.top.toFloat(),
+                right = bounds.right.toFloat(),
+                bottom = bounds.bottom.toFloat(),
+                name = matchedTag?.name
+            )
+        }
+    }
+
     private fun fetchImageUris(): List<Uri> {
         val uris = mutableListOf<Uri>()
         val projection = arrayOf(MediaStore.Images.Media._ID)

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.assignment.facescannerapp.domain.model.FaceBox
+import com.assignment.facescannerapp.domain.usecase.DetectFacesForImageUseCase
 import com.assignment.facescannerapp.domain.usecase.FaceDetectorUseCase
 import com.assignment.facescannerapp.domain.usecase.GetFaceTagForImageUseCase
 import com.assignment.facescannerapp.domain.usecase.SaveFaceTagUseCase
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class FaceGalleryViewModel @Inject constructor(
     private val faceDetectorUseCase: FaceDetectorUseCase,
     private val saveFaceTagUseCase: SaveFaceTagUseCase,
-    private val getFaceTagForImageUseCase: GetFaceTagForImageUseCase
+    private val getFaceTagForImageUseCase: GetFaceTagForImageUseCase,
+    private val detectFacesForImageUseCase: DetectFacesForImageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FaceGalleryUiState())
@@ -32,14 +34,14 @@ class FaceGalleryViewModel @Inject constructor(
     private fun scanGallery() {
         viewModelScope.launch {
             faceDetectorUseCase.scanImagesIncrementally().onStart {
-                    _uiState.value = uiState.value.copy(isLoading = true)
-                }.collect { faceImage ->
-                    val currentList = _uiState.value.faceImages.toMutableList()
-                    currentList.add(faceImage)
-                    _uiState.value = uiState.value.copy(
-                        isLoading = false, faceImages = currentList
-                    )
-                }
+                _uiState.value = uiState.value.copy(isLoading = true)
+            }.collect { faceImage ->
+                val currentList = _uiState.value.faceImages.toMutableList()
+                currentList.add(faceImage)
+                _uiState.value = uiState.value.copy(
+                    isLoading = false, faceImages = currentList
+                )
+            }
         }
     }
 
@@ -56,13 +58,20 @@ class FaceGalleryViewModel @Inject constructor(
 
         viewModelScope.launch {
             saveFaceTagUseCase.saveTag(uri.toString(), box, name)
-
-            // Reload this specific image
-            val updatedFaces = getFaceTagForImageUseCase.loadTagsForImage(uri.toString())
-            val updatedList = _uiState.value.faceImages.map {
-                if (it.uri == uri) it.copy(faces = updatedFaces) else it
+            val detectedFaces = detectFacesForImageUseCase.detectFacesForImage(uri)
+            val savedTags = getFaceTagForImageUseCase.loadTagsForImage(uri.toString())
+            val mergedFaces = detectedFaces.map { detectedBox ->
+                val match = savedTags.find {
+                    it.left == detectedBox.left &&
+                            it.top == detectedBox.top &&
+                            it.right == detectedBox.right &&
+                            it.bottom == detectedBox.bottom
+                }
+                detectedBox.copy(name = match?.name)
             }
-
+            val updatedList = _uiState.value.faceImages.map {
+                if (it.uri == uri) it.copy(faces = mergedFaces) else it
+            }
             _uiState.value = _uiState.value.copy(
                 faceImages = updatedList,
                 selectedImageUri = null,
