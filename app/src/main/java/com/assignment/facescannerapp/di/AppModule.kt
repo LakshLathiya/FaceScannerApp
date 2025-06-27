@@ -6,9 +6,7 @@ import com.assignment.facescannerapp.data.ImageRepositoryImpl
 import com.assignment.facescannerapp.data.room.AppDatabase
 import com.assignment.facescannerapp.data.room.dao.FaceTagDao
 import com.assignment.facescannerapp.domain.repo_interface.ImageRepository
-import com.assignment.facescannerapp.domain.usecase.DetectFacesForImageUseCase
-import com.assignment.facescannerapp.domain.usecase.FaceDetectorUseCase
-import com.assignment.facescannerapp.domain.usecase.GetFaceTagForImageUseCase
+import com.assignment.facescannerapp.domain.usecase.GetPagedFaceImagesUseCase
 import com.assignment.facescannerapp.domain.usecase.SaveFaceTagUseCase
 import dagger.Module
 import dagger.Provides
@@ -31,18 +29,10 @@ object AppModule {
         ImageRepositoryImpl(context, dao)
 
     @Provides
-    fun provideFaceDetectorUseCase(repo: ImageRepository): FaceDetectorUseCase =
-        FaceDetectorUseCase(repo)
+    fun provideGetPagedFaceImagesUseCase(repo: ImageRepository): GetPagedFaceImagesUseCase =
+        GetPagedFaceImagesUseCase(repo)
 
     @Provides
     fun provideSaveFaceTagUseCase(repo: ImageRepository): SaveFaceTagUseCase =
         SaveFaceTagUseCase(repo)
-
-    @Provides
-    fun provideGetFaceTagForImageUseCaseUseCase(repo: ImageRepository): GetFaceTagForImageUseCase =
-        GetFaceTagForImageUseCase(repo)
-
-    @Provides
-    fun provideDetectFacesForImageUseCaseUseCaseUseCase(repo: ImageRepository): DetectFacesForImageUseCase =
-        DetectFacesForImageUseCase(repo)
 }

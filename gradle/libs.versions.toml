@@ -1,5 +1,7 @@
 [versions]
+accompanistPlaceholderMaterial = "0.35.0"
 agp = "8.8.2"
+coilCompose = "2.2.2"
 faceDetection = "16.1.7"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
@@ -12,6 +14,7 @@ lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.01"
 hiltAndroid = "2.51.1"
+pagingRuntime = "3.3.6"
 roomRuntime = "2.7.2"
 
 [libraries]
@@ -40,6 +43,9 @@ kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-cor
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingRuntime" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
