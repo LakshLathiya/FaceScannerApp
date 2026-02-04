@@ -39,7 +39,6 @@ An Android app that detects faces in gallery images, allows tagging of individua
 - Dependency injection : Hilt
 - Persistence : Room (Wrapper on Sqlite)
 - Face detection : Google ML Kit Vision (FaceDetector)
-
 ---
 
 ## 🔍 Assumptions
