@@ -40,7 +40,6 @@ An Android app that detects faces in gallery images, allows tagging of individua
 - Persistence : Room (Wrapper on Sqlite)
 - Face detection : Google ML Kit Vision (FaceDetector)
 ---
-
 ## 🔍 Assumptions
 
 - Face position is matched on restart by comparing bounding box coordinates
