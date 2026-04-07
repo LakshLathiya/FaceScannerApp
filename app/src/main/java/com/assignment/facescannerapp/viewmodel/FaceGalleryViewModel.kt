@@ -11,6 +11,8 @@ import com.assignment.facescannerapp.domain.usecase.GetPagedFaceImagesUseCase
 import com.assignment.facescannerapp.domain.usecase.SaveFaceTagUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +26,66 @@ class FaceGalleryViewModel @Inject constructor(
     getPagedFaceImagesUseCase: GetPagedFaceImagesUseCase,
     private val saveFaceTagUseCase: SaveFaceTagUseCase
 ) : ViewModel() {
+    init {
+        // loadDataParallel()
+        // loadDataSequential()
+        loadDataWithCoroutineScope()
+    }
+
+    fun loadDataWithCoroutineScope() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                launch {
+                    getUser()
+                }
+                launch {
+                    getPost()
+                }
+                launch {
+                    getComments()
+                }
+            } catch (e: Exception) {
+                println("Exception caught: ${e.message}")
+            }
+        }
+    }
+
+    fun loadDataParallel() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = async { getUser() }
+            val posts = async { getPost() }
+            val comments = async { getComments() }
+            user.await()
+            posts.await()
+            comments.await()
+        }
+    }
+
+    fun loadDataSequential() = viewModelScope.launch(Dispatchers.IO) {
+        getUser()
+        getPost()
+        getComments()
+    }
+
+    suspend fun getUser() {
+        println("getUser: started")
+        delay(500)
+        println("getUser: ended")
+    }
+
+    suspend fun getPost() {
+        println("getPost: started")
+        delay(1000)
+        throw Exception("Exception in getPost")
+        println("getPost: end")
+    }
+
+    suspend fun getComments() {
+        println("getComments: started")
+        delay(2000)
+        println("getComments: end")
+    }
 
     val pagedImages: Flow<PagingData<FaceImage>> =
         getPagedFaceImagesUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
@@ -83,9 +145,6 @@ class FaceGalleryViewModel @Inject constructor(
 
     private fun areFacesSame(f1: FaceBox, f2: FaceBox): Boolean {
         val epsilon = 10f
-        return (f1.left - f2.left).absoluteValue < epsilon &&
-                (f1.top - f2.top).absoluteValue < epsilon &&
-                (f1.right - f2.right).absoluteValue < epsilon &&
-                (f1.bottom - f2.bottom).absoluteValue < epsilon
+        return (f1.left - f2.left).absoluteValue < epsilon && (f1.top - f2.top).absoluteValue < epsilon && (f1.right - f2.right).absoluteValue < epsilon && (f1.bottom - f2.bottom).absoluteValue < epsilon
     }
 }
